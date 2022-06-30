@@ -119,7 +119,7 @@ years.forEach(function(year){
   
   year_prev_sum = ee.Image(year_prev_sum);
   
-  var year_prev_freq = year_prev_sum.reduce('sum').divide((year-1)-1985);
+  var year_prev_freq = year_prev_sum.reduce('sum').divide((yearPost-1)-1985);
 
   // Map.addLayer(year_prev_max,{},'year_prev_max');
   // Map.addLayer(year_prev_freq,{},'year_prev_freq');
