@@ -12,7 +12,7 @@ var assets = ee.data.listAssets(address)
 assets.forEach(function(obj){
   var image = ee.Image(obj.id);
 
-  var year = ee.Number.parse(obj.id.slice(-4)).add(1);
+  var year = ee.Number.parse(obj.id.slice(-4));
   print(year)
   var year_image = ee.Image(year)
     .rename('year');
