@@ -14,7 +14,7 @@ var years = [
 
 
 var mbfogo = ee.Image('projects/mapbiomas-workspace/public/collection6/mapbiomas-fire-collection1-annual-burned-coverage-1')
-  //.slice(16)//->1985 - 2001 = 0016 || ->
+  .slice(16)//->1985 - 2001 = 0016 || ->
   .gte(1)
   .selfMask()
   .byte();      
