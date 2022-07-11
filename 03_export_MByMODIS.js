@@ -139,7 +139,7 @@ years.forEach(function(year){
   Map.addLayer(fire,{},'fire  ', false);
   
   
-  var output = 'projects/mapbiomas-workspace/FOGO/MODELAGEM/fire-and-freq-prev-post-v3-mbfogo_mcd64a1';
+  var output = 'projects/mapbiomas-workspace/FOGO/MODELAGEM/fire-and-freq-prev-post-v3-mbfogo_mcd64a1/';
   
   var image =   year_prev_max.rename('fire_prev')
       .addBands(year_prev_freq.rename('freq_prev'))
