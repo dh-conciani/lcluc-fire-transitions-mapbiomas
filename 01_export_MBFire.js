@@ -1,3 +1,9 @@
+var geometry = 
+    ee.Geometry.Polygon(
+        [[[-74.02555573040577, 5.724132001638358],
+          [-74.02555573040577, -34.36255478537683],
+          [-33.59586823040577, -34.36255478537683],
+          [-33.59586823040577, 5.724132001638358]]], null, false);
 
 // DATASET
 var fire = ee.Image('projects/mapbiomas-workspace/public/collection6/mapbiomas-fire-collection1-annual-burned-coverage-1')
