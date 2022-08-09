@@ -9,20 +9,33 @@ var fire_freq = ee.Image('projects/mapbiomas-workspace/public/collection6/mapbio
 
 // get land cover and land use (col. 7) 
 var collection = ee.Image('projects/mapbiomas-workspace/public/collection7/mapbiomas_collection70_integration_v2')
-      .slice(0,36)  // remove 2021
+      .slice(0,36);  // remove 2021
+
+// create recipe to receive remaped data
+var recipe = ee.Image([]);
+
+// remao each year
+ee.List.sequence({'start': 1985, 'end': 2020}).getInfo().forEach(function(year_i) {
+  // get year i
+  var classification_i = collection.select(['classification_' + year_i])
+      //remap
       .remap([1, 3, 4, 5, 49,  10, 11,  12, 32,  29, 13,  14, 15,  18, 19,  39, 20,  40, 41,  36, 46,  47, 48,  9,  21, 22,  23, 24,  30, 25,  26, 33,  31, 27],
-             [1, 3, 4, 3,  3,   4, 11,  12, 12,  12, 12,  18, 15,  18, 18,  18, 18,  18, 18,  18, 18,  18, 18, 18,  18, 25,  25, 25,  25, 25,  33, 33,  33, 27]);   
+             [1, 3, 4, 3,  3,   4, 11,  12, 12,  12, 12,  18, 15,  18, 18,  18, 18,  18, 18,  18, 18,  18, 18, 18,  18, 25,  25, 25,  25, 25,  33, 33,  33, 27])
+      .rename('classification_' + year_i);
+  // add into recipe
+  recipe = recipe.addBands(classification_i);
+});
 
 // compute n changes
-var n_changes = collection.reduce(ee.Reducer.countRuns()).subtract(1)
+var n_changes = recipe.reduce(ee.Reducer.countRuns()).subtract(1)
       .rename(['n_changes']);
 
 // compute n classes
-var n_classes = collection.reduce(ee.Reducer.countDistinctNonNull())
+var n_classes = recipe.reduce(ee.Reducer.countDistinctNonNull())
       .rename(['n_classes']);
 
 // get mode land use and land cover
-var mode = collection.reduce(ee.Reducer.mode())
+var mode = recipe.reduce(ee.Reducer.mode())
       .rename(['mode']);
 
 // get pixel area (in hectares)
@@ -51,13 +64,6 @@ var values = data.sample({
 	tileScale: 2,
 	geometries:false,
 });
-
-//.sampleRegions({
-//    collection: matopiba,
-//    scale: 30,
-//    tileScale: 5,
-//    geometries: false
-//  });
 
 // export to drive
 Export.table.toDrive({
