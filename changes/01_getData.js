@@ -1,3 +1,5 @@
+// dhemerson.costa@ipam.org.br
+
 // get fire frequency (col. 1) for the entire period (1985-2020)
 var fire_freq = ee.Image('projects/mapbiomas-workspace/public/collection6/mapbiomas-fire-collection1-fire-frequency-1')
       .select('fire_frequency_1985_2020')
@@ -34,3 +36,22 @@ var data = fire_freq.addBands(
 
 // plot
 Map.addLayer(data, {}, 'data');
+
+// read matopiba vector
+var matopiba = ee.FeatureCollection('users/dh-conciani/vectors/matopiba_lapig_cerrado');
+
+// extract data 
+var values = data.sampleRegions({
+    collection: matopiba,
+    scale: 30,
+    tileScale: 1,
+    geometries: false
+  });
+
+// export to drive
+Export.table.toDrive({
+  collection:values,
+  description: 'fire-nChanges',
+  folder: 'EXPORT',
+  fileFormat: 'csv',
+  });
