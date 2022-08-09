@@ -42,11 +42,13 @@ var matopiba = ee.FeatureCollection('users/dh-conciani/vectors/matopiba_lapig_ce
 var values = data.sample({
 	region: matopiba,
 	scale: 30,
-	factor: 0.2,
+	factor: 0.1,
 	seed: 1,
-	tileScale: 2,
+	tileScale: 3,
 	geometries: false,
 });
+
+print(values.first())
 
 //.sampleRegions({
 //    collection: matopiba,
@@ -58,7 +60,7 @@ var values = data.sample({
 // export to drive
 Export.table.toDrive({
   collection: values,
-  description: 'fire-nChanges',
+  description: 'fire-nChanges_01',
   folder: 'EXPORT',
   fileFormat: 'csv',
   });
