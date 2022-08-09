@@ -4,11 +4,14 @@
 var fire_freq = ee.Image('projects/mapbiomas-workspace/public/collection6/mapbiomas-fire-collection1-fire-frequency-1')
       .select('fire_frequency_1985_2020')
       .divide(100).int()
-      .rename(['fire_freq']);
+      .rename(['fire_freq'])
+      .unmask(0);
 
 // get land cover and land use (col. 7) 
 var collection = ee.Image('projects/mapbiomas-workspace/public/collection7/mapbiomas_collection70_integration_v2')
-      .slice(0,36);    // remove 2021
+      .slice(0,36)  // remove 2021
+      .remap([1, 3, 4, 5, 49,  10, 11,  12, 32,  29, 13,  14, 15,  18, 19,  39, 20,  40, 41,  36, 46,  47, 48,  9,  21, 22,  23, 24,  30, 25,  26, 33,  31, 27],
+             [1, 3, 4, 3,  3,   4, 11,  12, 12,  12, 12,  18, 15,  18, 18,  18, 18,  18, 18,  18, 18,  18, 18, 18,  18, 25,  25, 25,  25, 25,  33, 33,  33, 27]);   
 
 // compute n changes
 var n_changes = collection.reduce(ee.Reducer.countRuns()).subtract(1)
@@ -36,19 +39,18 @@ var data = fire_freq.addBands(
 Map.addLayer(data, {}, 'data');
 
 // read matopiba vector
-var matopiba = ee.FeatureCollection('users/dh-conciani/vectors/matopiba_lapig_cerrado').aside(Map.addLayer)
+var matopiba = ee.FeatureCollection('users/dh-conciani/vectors/matopiba_lapig_cerrado');
 
 // extract data 
 var values = data.sample({
 	region: matopiba,
 	scale: 30,
-	factor: 0.1,
-	seed: 1,
-	tileScale: 3,
-	geometries: false,
+	numPixels: 1e6,
+	seed:1,
+	dropNulls:true,
+	tileScale: 2,
+	geometries:false,
 });
-
-print(values.first())
 
 //.sampleRegions({
 //    collection: matopiba,
@@ -60,7 +62,7 @@ print(values.first())
 // export to drive
 Export.table.toDrive({
   collection: values,
-  description: 'fire-nChanges_01',
+  description: 'fire-nChanges_1kk',
   folder: 'EXPORT',
   fileFormat: 'csv',
   });
