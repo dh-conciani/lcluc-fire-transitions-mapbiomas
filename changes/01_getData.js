@@ -30,27 +30,34 @@ var pixel_area = ee.Image.pixelArea().divide(10000)
 var data = fire_freq.addBands(
   n_changes).addBands(
     n_classes).addBands(
-      mode).addBands(
-        pixel_area).aside(
-          print);
+      mode).aside(print);
 
 // plot
 Map.addLayer(data, {}, 'data');
 
 // read matopiba vector
-var matopiba = ee.FeatureCollection('users/dh-conciani/vectors/matopiba_lapig_cerrado');
+var matopiba = ee.FeatureCollection('users/dh-conciani/vectors/matopiba_lapig_cerrado').aside(Map.addLayer)
 
 // extract data 
-var values = data.sampleRegions({
-    collection: matopiba,
-    scale: 30,
-    tileScale: 1,
-    geometries: false
-  });
+var values = data.sample({
+	region: matopiba,
+	scale: 30,
+	factor: 0.2,
+	seed: 1,
+	tileScale: 2,
+	geometries: false,
+});
+
+//.sampleRegions({
+//    collection: matopiba,
+//    scale: 30,
+//    tileScale: 5,
+//    geometries: false
+//  });
 
 // export to drive
 Export.table.toDrive({
-  collection:values,
+  collection: values,
   description: 'fire-nChanges',
   folder: 'EXPORT',
   fileFormat: 'csv',
