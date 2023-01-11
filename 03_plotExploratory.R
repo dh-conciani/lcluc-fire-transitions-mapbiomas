@@ -28,9 +28,18 @@ for (i in 1:length(files)) {
   rm(x)
 }
 
+## 
+table(recipe$fire_year)
+
 ## compute fire-age pre and post transition 
 recipe$age_pre <- (recipe$year - recipe$fire_prev)*-1
 recipe$age_post <- (recipe$fire_post - recipe$year)
+
+
+head(recipe)
+## compute
+nrow(subset(recipe, age_pre > -6))
+unique(subset(recipe, age_pre < -5)$age_pre)
 
 ## melt table
 age <- melt(recipe[, c('age_pre', 'age_post', 'year')],
